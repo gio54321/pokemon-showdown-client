@@ -1,4 +1,6 @@
 {
-  "socketServer" : "wss://sim.smogon.com/showdown/websocket",
-  "actionServer" : "https://play.pokemonshowdown.com/action.php"
+  "socketServer" : "ws://sim.smogon.com/showdown/websocket",
+  "actionServer" : "https://play.pokemonshowdown.com/action.php",
+  "username" : "",
+  "password" : ""
 }
