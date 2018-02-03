@@ -14,3 +14,4 @@ class PokeClient:
         if self.debug: print('Initializing the PokeClient object')
 
         self.receiver = PokeReceiver()
+        
