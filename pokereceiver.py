@@ -3,6 +3,7 @@
 # --------------------
 
 import websocket as ws
+import request
 
 from user import *
 from pokeconfig import *
@@ -21,6 +22,7 @@ class PokeReceiver:
 
         # each line represent a command
         commands = data.split('\n')
+        print (commands)
         currRoom = ''
         for c in commands:
             parts = c.split("|")
@@ -28,7 +30,7 @@ class PokeReceiver:
             if (parts[0] != ''):
                 currRoom = parts[0]
                 continue
-            commandQueue.append({
+            self.commandQueue.append({
             'r' : currRoom,
             'c' : parts[1],
             'a' : parts[2:]
@@ -36,14 +38,33 @@ class PokeReceiver:
 
 
     def login(self, user):
-        # wait for receiving challstr
+        # check if the credentials has been changed in config.json
         if (user.username == '' or user.password == ''):
             return False
 
+        # receive data until he receive challstr
+        challstr = ''
+        while challstr == '':
+            self.receiveData()
+            for c in self.commandQueue:
+                if (c['c'] == 'challstr'):
+                    challstr = c['a'][0] + '|' + c['a'][1]
 
+        print('challstr: ' + challstr)
+
+        # request data from authserver to get assertion
+        data = {
+            'act' : 'login',
+            'name' : user.username,
+            'pass' : user.password,
+            'challstr' : challstr
+        }
+        r = request.post(self.config['actionServer'], data)
+        response = json.loads(r.text[1:])
 
 
 # some debugging stuff
 if __name__ == '__main__':
     pkr = PokeReceiver()
     user = User()
+    pkr.login(user)
